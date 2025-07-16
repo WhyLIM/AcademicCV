@@ -28,3 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+.env
+publication.ipynb
+pubmedData.js
