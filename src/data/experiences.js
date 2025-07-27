@@ -10,7 +10,7 @@
 export const experiences = [
   {
     position: 'Assistant Engineer',
-    institution: 'Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences',
+    institution: 'Shenzhen Institutes of Advanced Technology (SIAT), Chinese Academy of Sciences',
     logo: 'https://img.limina.top/cv/icons/org-siat.svg',
     period: 'July 2025 – Present',
     location: 'Shenzhen',

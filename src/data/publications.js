@@ -41,11 +41,11 @@ export const publications = [
     "doi": "10.1186/s12967-024-05868-3",
     "links": [
       {
-        "type": "PMID",
+        "type": "PubMed",
         "url": "https://pubmed.ncbi.nlm.nih.gov/39627804/"
       },
       {
-        "type": "PMCID",
+        "type": "PMC",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11613467/"
       },
       {
@@ -93,11 +93,11 @@ export const publications = [
     "doi": "10.1136/bmjophth-2024-001915",
     "links": [
       {
-        "type": "PMID",
+        "type": "PubMed",
         "url": "https://pubmed.ncbi.nlm.nih.gov/39537208/"
       },
       {
-        "type": "PMCID",
+        "type": "PMC",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11580298/"
       },
       {
@@ -140,11 +140,11 @@ export const publications = [
     "doi": "10.1186/s13040-024-00394-w",
     "links": [
       {
-        "type": "PMID",
+        "type": "PubMed",
         "url": "https://pubmed.ncbi.nlm.nih.gov/39385276/"
       },
       {
-        "type": "PMCID",
+        "type": "PMC",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11465508/"
       },
       {
@@ -192,11 +192,11 @@ export const publications = [
     "doi": "10.1038/s41514-024-00162-4",
     "links": [
       {
-        "type": "PMID",
+        "type": "PubMed",
         "url": "https://pubmed.ncbi.nlm.nih.gov/39103390/"
       },
       {
-        "type": "PMCID",
+        "type": "PMC",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11300643/"
       },
       {
@@ -253,11 +253,11 @@ export const publications = [
     "doi": "10.1002/imt2.155",
     "links": [
       {
-        "type": "PMID",
+        "type": "PubMed",
         "url": "https://pubmed.ncbi.nlm.nih.gov/38868513/"
       },
       {
-        "type": "PMCID",
+        "type": "PMC",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10989088/"
       },
       {

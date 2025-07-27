@@ -1,171 +1,24 @@
+<!--
+ * @Author: Mli-TB mli.bio@outlook.com
+ * @Date: 2025-07-11 12:42:37
+ * @LastEditors: Mli-TB mli.bio@outlook.com
+ * @LastEditTime: 2025-07-26 23:44:39
+ * @FilePath: \AcademicCV\src\views\HomeView.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import GithubCard from '@/components/GithubCard.vue'; // GitHub卡片组件
+import githubService from '@/services/githubService.js'; // GitHub服务
 
-// 个人信息数据
-const personalInfo = {
-  name: 'Min Li',
-  avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-  email: 'example@university.edu',
-  github: 'https://github.com/username',
-  researchgate: 'https://www.researchgate.net/profile/Username',
-  bio: `Min Li (李旻) received a Bachelor of Science degree from <a href="http://eng.suda.edu.cn/" target="_blank">Soochow University</a>, majoring in bioinformatics, under the tutelage of Professor <a href="https://www.researchgate.net/profile/Guang-Hu-3" target="_blank"><strong>Guang Hu</strong></a>, and is currently working as a data engineer in the team of Dr. <a href="https://www.researchgate.net/profile/Xueli-Zhang" target="_blank"><strong>Xueli Zhang</strong></a>, PI of <a href="https://www.gdghospital.org.cn/en/" target="_blank">Guangdong Provincial People's Hospital (GDPH)</a>.<br><br>His research interests are mainly in the fields of life sciences & computer science, focusing on data analysis and exploration at the biomolecular level.`,
-  cvEn: '/path/to/cv-en.pdf',
-  cvCn: '/path/to/cv-cn.pdf'
-}
-
-// 技能数据
-const skills = [
-  { name: 'Windows', icon: 'windows', category: 'Operating System' },
-  { name: 'Linux (Zorin, Ubuntu, CentOS, Kali)', icon: 'linux', category: 'Operating System' },
-  { name: 'Hackintosh', icon: 'apple', category: 'Operating System' },
-  { name: 'Python', icon: 'python', category: 'Programming Language' },
-  { name: 'R', icon: 'r-project', category: 'Programming Language' },
-  { name: 'HTML', icon: 'html5', category: 'Programming Language' },
-  { name: 'CSS', icon: 'css3-alt', category: 'Programming Language' },
-  { name: 'JavaScript', icon: 'js', category: 'Programming Language' },
-  { name: 'VUE3', icon: 'vuejs', category: 'Programming Language' },
-  { name: 'MySQL', icon: 'database', category: 'Programming Language' }
-]
-
-// 经历数据
-const experiences = [
-  {
-    position: '博士研究生',
-    institution: '某大学计算机科学与技术学院',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    period: '2020年9月 - 至今',
-    location: '北京',
-    description: '主要研究方向为人工智能和机器学习算法，参与多个国家级科研项目。'
-  },
-  {
-    position: '研究助理',
-    institution: '某研究所人工智能实验室',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    period: '2018年7月 - 2020年8月',
-    location: '上海',
-    description: '参与开发深度学习模型，解决计算机视觉相关问题。'
-  },
-  {
-    position: '硕士研究生',
-    institution: '某大学信息科学与工程学院',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    period: '2015年9月 - 2018年6月',
-    location: '广州',
-    description: '研究方向为数据挖掘和模式识别，获得优秀毕业生称号。'
-  }
-]
-
-// 论文数据
-const publications = [
-  {
-    title: '基于深度学习的图像分类算法研究',
-    authors: '张三, 李四, 王五',
-    journal: 'IEEE Transactions on Pattern Analysis and Machine Intelligence',
-    year: '2022',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '提出了一种新的深度学习模型，在图像分类任务上取得了显著的性能提升。',
-    links: [
-      { type: 'PDF', url: '#' },
-      { type: 'DOI', url: 'https://doi.org/10.1109/TPAMI.2022.123456' },
-      { type: 'GitHub', url: 'https://github.com/username/project1' }
-    ]
-  },
-  {
-    title: '自然语言处理中的注意力机制研究',
-    authors: '张三, 赵六',
-    journal: 'ACL Conference',
-    year: '2021',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '探讨了注意力机制在自然语言处理任务中的应用，并提出了改进方法。',
-    links: [
-      { type: 'PDF', url: '#' },
-      { type: 'DOI', url: 'https://doi.org/10.18653/v1/2021.acl-long.123' }
-    ]
-  },
-  {
-    title: '机器学习在医学图像分析中的应用',
-    authors: '李四, 张三, 孙七',
-    journal: 'Medical Image Analysis',
-    year: '2020',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '将机器学习技术应用于医学图像分析，提高了疾病诊断的准确率。',
-    links: [
-      { type: 'PDF', url: '#' },
-      { type: 'DOI', url: 'https://doi.org/10.1016/j.media.2020.123456' }
-    ]
-  }
-]
-
-// 项目数据
-const projects = [
-  {
-    title: '智能图像识别系统',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '基于深度学习的图像识别系统，可以识别多种物体和场景。',
-    links: [
-      { type: 'Demo', url: '#' },
-      { type: 'GitHub', url: 'https://github.com/username/image-recognition' }
-    ]
-  },
-  {
-    title: '自然语言处理工具包',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '开发了一套自然语言处理工具包，支持中文分词、情感分析等功能。',
-    links: [
-      { type: 'GitHub', url: 'https://github.com/username/nlp-toolkit' }
-    ]
-  },
-  {
-    title: '数据可视化平台',
-    image: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    description: '一个交互式数据可视化平台，支持多种图表类型和数据源。',
-    links: [
-      { type: 'Demo', url: '#' },
-      { type: 'GitHub', url: 'https://github.com/username/data-viz' }
-    ]
-  }
-]
-
-// 成就数据
-const accomplishments = [
-  {
-    title: '优秀青年科学家奖',
-    institution: '中国科学院',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    date: '2022年',
-    description: '因在人工智能领域的突出贡献而获得此奖项。',
-    certificate: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
-  },
-  {
-    title: '最佳论文奖',
-    institution: 'IEEE国际会议',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    date: '2021年',
-    description: '论文《基于深度学习的图像分类算法研究》获得最佳论文奖。',
-    certificate: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
-  },
-  {
-    title: '编程竞赛一等奖',
-    institution: '全国高校计算机大赛',
-    logo: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-    date: '2019年',
-    description: '在全国高校计算机编程大赛中获得一等奖。',
-    certificate: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
-  }
-]
-
-// 联系方式数据
-const contactInfo = {
-  office: '某大学计算机科学与技术学院1号楼303室',
-  officeHours: '周一至周五 9:00-17:00',
-  email: 'example@university.edu',
-  phone: '+86 123 4567 8901',
-  location: {
-    lat: 39.9042,
-    lng: 116.4074,
-    zoom: 15
-  }
-}
+// 导入所有数据
+import {
+  personalInfo,
+  experiences,
+  publications,
+  accomplishments,
+  contactInfo
+} from '../data'
 
 // 控制图片预览
 const dialogVisible = ref(false)
@@ -175,6 +28,73 @@ const showPreview = (image) => {
   previewImage.value = image
   dialogVisible.value = true
 }
+
+const loading = ref(true);
+const error = ref(null);
+const projects = ref([]);
+const currentPagePublications = ref(1)
+const currentPageProjects = ref(1)
+const pageSize = ref(3)
+const totalPublications = ref(publications.length)
+
+const paginatedPublications = computed(() => {
+  const start = (currentPagePublications.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return publications.slice(start, end)
+})
+
+const publicationPageChange = (page) => {
+  currentPagePublications.value = page
+  // 滚动到publications部分
+  const publicationsSection = document.getElementById('publications')
+  if (publicationsSection) {
+    publicationsSection.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const paginatedProjects = computed(() => {
+  const start = (currentPageProjects.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return projects.value.slice(start, end)
+})
+
+const projectPageChange = (page) => {
+  currentPageProjects.value = page
+  // 滚动到projects部分
+  const publicationsSection = document.getElementById('projects')
+  if (publicationsSection) {
+    publicationsSection.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const openLink = (url) => {
+  window.open(url, '_blank');
+};
+
+// 定义你想要显示的 GitHub 仓库列表
+const repoList = [
+  { owner: 'WhyLIM', repo: 'Drugbank_parse' },
+  { owner: 'WhyLIM', repo: 'TTD_parse' },
+  { owner: 'WhyLIM', repo: 'PersonalCV' },
+  { owner: 'WhyLIM', repo: 'DTII' },
+  { owner: 'WhyLIM', repo: 'ADDB' },
+  { owner: 'WhyLIM', repo: 'E-utilities_zh-CN' },
+  { owner: 'WhyLIM', repo: 'PhotoHub' },
+  { owner: 'WhyLIM', repo: 'Graduation' },
+  { owner: 'WhyLIM', repo: 'Notes-BioChem' },
+  { owner: 'WhyLIM', repo: 'Notes-GBiology' }
+];
+
+onMounted(async () => {
+  try {
+    const results = await githubService.getMultipleReposInfo(repoList);
+    projects.value = results;
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -182,20 +102,23 @@ const showPreview = (image) => {
     <!-- 个人信息部分 -->
     <section id="home" class="section biography-section">
       <div class="inner-container">
-        <el-row :gutter="20">
+        <el-row :gutter="70">
           <el-col :xs="24" :sm="8" :md="6" class="avatar-col">
             <div class="avatar-container">
-              <el-avatar :size="150" :src="personalInfo.avatar" />
+              <el-avatar :size="260" :src="personalInfo.avatar" />
               <h2 class="name">{{ personalInfo.name }}</h2>
               <div class="social-icons">
                 <a :href="`mailto:${personalInfo.email}`" title="Email">
-                  <font-awesome-icon :icon="['fas', 'envelope']" size="lg" />
+                  <font-awesome-icon :icon="['fas', 'envelope']" size="xl" style="color: #55ACD5" />
+                </a>
+                <a :href="personalInfo.googlescholar" target="_blank" title="GoogleScholar">
+                  <font-awesome-icon :icon="['fab', 'google-scholar']" size="xl" style="color: #4285F4" />
                 </a>
                 <a :href="personalInfo.researchgate" target="_blank" title="ResearchGate">
-                  <font-awesome-icon :icon="['fab', 'researchgate']" size="lg" />
+                  <font-awesome-icon :icon="['fab', 'researchgate']" size="xl" style="color: #5BC9BB" />
                 </a>
                 <a :href="personalInfo.github" target="_blank" title="GitHub">
-                  <font-awesome-icon :icon="['fab', 'github']" size="lg" />
+                  <font-awesome-icon :icon="['fab', 'github']" size="xl" style="color: #191717" />
                 </a>
               </div>
             </div>
@@ -205,10 +128,10 @@ const showPreview = (image) => {
               <h1>Biography</h1>
               <p v-html="personalInfo.bio"></p>
               <div class="cv-buttons">
-                <el-button color="#626aef">
+                <el-button color="#626aef" @click="openLink(personalInfo.cvEn)">
                   <font-awesome-icon :icon="['fas', 'file-arrow-down']" />&nbsp;&nbsp;Download CV
                 </el-button>
-                <el-button color="#626aef">
+                <el-button color="#626aef" @click="openLink(personalInfo.cvCn)">
                   <font-awesome-icon :icon="['fas', 'file-arrow-down']" />&nbsp;&nbsp;下载简历（中文）
                 </el-button>
               </div>
@@ -221,84 +144,162 @@ const showPreview = (image) => {
     <!-- 技能部分 -->
     <section id="skills" class="section skills-section">
       <div class="inner-container">
-        <h1 class="section-title">Skills</h1>
-        <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="8" v-for="(skill, index) in skills" :key="index">
-            <el-card class="skill-card">
-              <div class="skill-icon" v-if="skill.icon">
-                <font-awesome-icon :icon="['fab', skill.icon]" size="2x" />
-              </div>
-              <div class="skill-icon" v-else>
-                <el-icon><el-icon-monitor /></el-icon>
-              </div>
-              <div class="skill-info">
-                <h3>{{ skill.name }}</h3>
-                <p>{{ skill.category }}</p>
-              </div>
-            </el-card>
+        <h1 align="center">Skills</h1>
+        <el-row :gutter="70">
+          <!-- OS -->
+          <el-col :xs="24" :sm="8" :md="8" class="skill-col">
+            <h3>OS enthusiast</h3>
+            <div>
+              <img
+                src="https://img.shields.io/badge/Windows%20XP-%235EC281?style=flat-square&logo=windows%20xp&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/Windows%207-%23E3F5FC?style=flat-square&logo=windows%20xp&logoColor=gray" />
+              <img
+                src="https://img.shields.io/badge/Windows%2010-%23009DF7?style=flat-square&logo=windows%2010&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/Windows%2011-%23E7FDFF?style=flat-square&logo=windows%2011&logoColor=gray" />
+              <img src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat-square&logo=ubuntu&logoColor=white" />
+              <img src="https://img.shields.io/badge/Zorin-%2315A6F0?style=flat-square&logo=zorin&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/Kali-%231B51AD?style=flat-square&logo=kali%20linux&logoColor=white" />
+              <img src="https://img.shields.io/badge/CentOS-%23A14F8C?style=flat-square&logo=centos&logoColor=white" />
+              <img src="https://img.shields.io/badge/Hackintosh-black?style=flat-square&logo=apple&logoColor=white" />
+            </div>
+          </el-col>
+          <!-- Programming -->
+          <el-col :xs="24" :sm="8" :md="8" class="skill-col">
+            <h3>Programming language</h3>
+            <div>
+              <img src="https://img.shields.io/badge/PYTHON-%235A8693?style=flat-square&logo=python&logoColor=white" />
+              <img src="https://img.shields.io/badge/R-%23D26E3A?style=flat-square&logo=r&logoColor=white" />
+              <img src="https://img.shields.io/badge/HTML-%23EEA23B?style=flat-square&logo=html5&logoColor=white" />
+              <img src="https://img.shields.io/badge/CSS-%23D8491D?style=flat-square&logo=css&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/JAVASCRIPT-%23855C3E?style=flat-square&logo=javascript&logoColor=white" />
+              <img src="https://img.shields.io/badge/PHP-%23787CB5?style=flat-square&logo=php&logoColor=white" />
+              <img src="https://img.shields.io/badge/VUE-%2342b883?style=flat-square&logo=vue.js&logoColor=white" />
+              <img src="https://img.shields.io/badge/SQL-%23929BAC?style=flat-square&logo=mysql&logoColor=white" />
+              <img src="https://img.shields.io/badge/GIT-%23F05032?style=flat-square&logo=git&logoColor=white" />
+              <img src="https://img.shields.io/badge/SHELL-%23172639?style=flat-square&logo=shell&logoColor=white" />
+            </div>
+          </el-col>
+          <!-- AI & LLM -->
+          <el-col :xs="24" :sm="8" :md="8" class="skill-col">
+            <h3>AI & LLM Tools</h3>
+            <div>
+              <img src="https://img.shields.io/badge/ChatGPT-412991?style=flat-square&logo=openai&logoColor=white" />
+              <img src="https://img.shields.io/badge/Claude-D97757?style=flat-square&logo=claude&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/DeepSeek-000?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjFlbSIgc3R5bGU9ImZsZXg6bm9uZTtsaW5lLWhlaWdodDoxIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPkRlZXBTZWVrPC90aXRsZT48cGF0aCBkPSJNMjMuNzQ4IDQuNDgyYy0uMjU0LS4xMjQtLjM2NC4xMTMtLjUxMi4yMzQtLjA1MS4wMzktLjA5NC4wOS0uMTM3LjEzNi0uMzcyLjM5Ny0uODA2LjY1Ny0xLjM3My42MjYtLjgyOS0uMDQ2LTEuNTM3LjIxNC0yLjE2My44NDgtLjEzMy0uNzgyLS41NzUtMS4yNDgtMS4yNDctMS41NDgtLjM1Mi0uMTU2LS43MDgtLjMxMS0uOTU1LS42NS0uMTcyLS4yNDEtLjIxOS0uNTEtLjMwNS0uNzc0LS4wNTUtLjE2LS4xMS0uMzIzLS4yOTMtLjM1LS4yLS4wMzEtLjI3OC4xMzYtLjM1Ni4yNzYtLjMxMy41NzItLjQzNCAxLjIwMi0uNDIyIDEuODQuMDI3IDEuNDM2LjYzMyAyLjU4IDEuODM4IDMuMzkzLjEzNy4wOTMuMTcyLjE4Ny4xMjkuMzIzLS4wODIuMjgtLjE4LjU1Mi0uMjY2LjgzMy0uMDU1LjE3OS0uMTM3LjIxNy0uMzI5LjE0YTUuNTI2IDUuNTI2IDAgMDEtMS43MzYtMS4xOGMtLjg1Ny0uODI4LTEuNjMxLTEuNzQyLTIuNTk3LTIuNDU4YTExLjM2NSAxMS4zNjUgMCAwMC0uNjg5LS40NzFjLS45ODUtLjk1Ny4xMy0xLjc0My4zODgtMS44MzYuMjctLjA5OC4wOTMtLjQzMi0uNzc5LS40MjgtLjg3Mi4wMDQtMS42Ny4yOTUtMi42ODcuNjg0YTMuMDU1IDMuMDU1IDAgMDEtLjQ2NS4xMzcgOS41OTcgOS41OTcgMCAwMC0yLjg4My0uMTAyYy0xLjg4NS4yMS0zLjM5IDEuMTAyLTQuNDk3IDIuNjIzQy4wODIgOC42MDYtLjIzMSAxMC42ODQuMTUyIDEyLjg1Yy40MDMgMi4yODQgMS41NjkgNC4xNzUgMy4zNiA1LjY1MyAxLjg1OCAxLjUzMyAzLjk5NyAyLjI4NCA2LjQzOCAyLjE0IDEuNDgyLS4wODUgMy4xMzMtLjI4NCA0Ljk5NC0xLjg2LjQ3LjIzNC45NjIuMzI3IDEuNzguMzk3LjYzLjA1OSAxLjIzNi0uMDMgMS43MDUtLjEyOC43MzUtLjE1Ni42ODQtLjgzNy40MTktLjk2MS0yLjE1NS0xLjAwNC0xLjY4Mi0uNTk1LTIuMTEzLS45MjYgMS4wOTYtMS4yOTYgMi43NDYtMi42NDIgMy4zOTItNy4wMDMuMDUtLjM0Ny4wMDctLjU2NSAwLS44NDUtLjAwNC0uMTcuMDM1LS4yMzcuMjMtLjI1NmE0LjE3MyA0LjE3MyAwIDAwMS41NDUtLjQ3NWMxLjM5Ni0uNzYzIDEuOTYtMi4wMTUgMi4wOTMtMy41MTcuMDItLjIzLS4wMDQtLjQ2Ny0uMjQ3LS41ODh6TTExLjU4MSAxOGMtMi4wODktMS42NDItMy4xMDItMi4xODMtMy41Mi0yLjE2LS4zOTIuMDI0LS4zMjEuNDcxLS4yMzUuNzYzLjA5LjI4OC4yMDcuNDg2LjM3MS43MzkuMTE0LjE2Ny4xOTIuNDE2LS4xMTMuNjAzLS42NzMuNDE2LTEuODQyLS4xNC0xLjg5Ny0uMTY3LTEuMzYxLS44MDItMi41LTEuODYtMy4zMDEtMy4zMDctLjc3NC0xLjM5My0xLjIyNC0yLjg4Ny0xLjI5OC00LjQ4Mi0uMDItLjM4Ni4wOTMtLjUyMi40NzctLjU5MmE0LjY5NiA0LjY5NiAwIDAxMS41MjktLjAzOWMyLjEzMi4zMTIgMy45NDYgMS4yNjUgNS40NjggMi43NzQuODY4Ljg2IDEuNTI1IDEuODg3IDIuMjAyIDIuODkxLjcyIDEuMDY2IDEuNDk0IDIuMDgyIDIuNDggMi45MTQuMzQ4LjI5Mi42MjUuNTE0Ljg5MS42NzctLjgwMi4wOS0yLjE0LjExLTMuMDU0LS42MTR6bTEtNi40NGEuMzA2LjMwNiAwIDAxLjQxNS0uMjg3LjMwMi4zMDIgMCAwMS4yLjI4OC4zMDYuMzA2IDAgMDEtLjMxLjMwNy4zMDMuMzAzIDAgMDEtLjMwNC0uMzA4em0zLjExIDEuNTk2Yy0uMi4wODEtLjM5OS4xNTEtLjU5LjE2YTEuMjQ1IDEuMjQ1IDAgMDEtLjc5OC0uMjU0Yy0uMjc0LS4yMy0uNDctLjM1OC0uNTUyLS43NThhMS43MyAxLjczIDAgMDEuMDE2LS41ODhjLjA3LS4zMjctLjAwOC0uNTM3LS4yMzktLjcyNy0uMTg3LS4xNTYtLjQyNi0uMTk5LS42ODgtLjE5OWEuNTU5LjU1OSAwIDAxLS4yNTQtLjA3OGMtLjExLS4wNTQtLjItLjE5LS4xMTQtLjM1OC4wMjgtLjA1NC4xNi0uMTg2LjE5Mi0uMjEuMzU2LS4yMDIuNzY3LS4xMzYgMS4xNDYuMDE2LjM1Mi4xNDQuNjE4LjQwOCAxLjAwMS43ODIuMzkxLjQ1MS40NjIuNTc2LjY4NS45MTQuMTc2LjI2NS4zMzYuNTM3LjQ0NS44NDguMDY3LjE5NS0uMDE5LjM1NC0uMjUuNDUyeiIgZmlsbD0iIzRENkJGRSI+PC9wYXRoPjwvc3ZnPg==&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/Yuanbao-FFF?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjFlbSIgc3R5bGU9ImZsZXg6bm9uZTtsaW5lLWhlaWdodDoxIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPll1YW5iYW88L3RpdGxlPjxwYXRoIGQ9Ik0xMiAyNGM2LjYyNyAwIDEyLTUuMzczIDEyLTEyUzE4LjYyNyAwIDEyIDAgMCA1LjM3MyAwIDEyczUuMzczIDEyIDEyIDEyeiIgZmlsbD0idXJsKCNsb2JlLWljb25zLXl1YW5iYW8tZmlsbC0wKSI+PC9wYXRoPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyIDBjLjUxOCAwIDEuMDI4LjAzMyAxLjUyOC4wOTZBNi4xODggNi4xODggMCAwMTEyLjEyIDEyLjI4bC0uMTIuMDAxYy0yLjk5IDAtNS4yNDIgMi4xNzktNS41NTQgNS4xMS0uMjIzIDIuMDg2LjM1MyA0LjQxMiAyLjI0MiA2LjE0NkMzLjY3MiAyMi4xIDAgMTcuNDc5IDAgMTIgMCA1LjM3MyA1LjM3MyAwIDEyIDB6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMteXVhbmJhby1maWxsLTEpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik01LjI4NiA1YTIuNDM4IDIuNDM4IDAgMDEuNjgyIDMuMzhjLTMuOTYyIDUuOTY2LTMuMjE1IDEwLjc0MyAyLjY0OCAxNS4xMzZDMy42MzYgMjIuMDU2IDAgMTcuNDUyIDAgMTJjMC0xLjc4Ny4zOS0zLjQ4MiAxLjA5LTUuMDA2LjI1My0uNDM1LjUyNS0uODcyLjgxNy0xLjMxMUEyLjQzOCAyLjQzOCAwIDAxNS4yODYgNXoiIGZpbGw9InVybCgjbG9iZS1pY29ucy15dWFuYmFvLWZpbGwtMikiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjk4LjA0Yy4yNzIuMDIxLjU0My4wNTMuODEuMDkzLjU4My4xMDYgMS4xMTcuMjU0IDEuNTM4LjQ0IDYuNjM4IDIuOTI3IDguMDcgMTAuMDUyIDEuNzQ4IDE1LjY0MmE0LjEyNiA0LjEyNiAwIDAxLTUuODIyLS4zNThjLTEuNTEtMS43MDYtMS4zLTQuMTg0LjM1Ny01LjgyMi44NTgtLjg0OCAzLjEwOC0xLjIyMyA0LjA0NS0yLjQ0IDEuMjU3LTEuNjM1IDIuMTIyLTYuMDEtMi41MjMtNy41MDdMMTIuOTguMDR6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMteXVhbmJhby1maWxsLTMpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy41MjguMDk2QTYuMTg3IDYuMTg3IDAgMDExMiAxMi4yODFhNS43NTIgNS43NTIgMCAwMC0xLjcxLjI1NWMuMTQ3LS45MDUuNTk1LTEuNzg0IDEuMzIxLTIuNTAxLjg1OC0uODQ4IDMuMTA4LTEuMjIzIDQuMDQ1LTIuNDQxIDEuMjctMS42NTEgMi4xNC02LjEwNC0yLjY3Ni03LjU1NC4xODQuMDE0LjM2Ny4wMzMuNTQ4LjA1NnoiIGZpbGw9IiNFQ0VDRUUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImxvYmUtaWNvbnMteXVhbmJhby1maWxsLTAiIHgxPSIxMiIgeDI9IjEyIiB5MT0iMCIgeTI9IjI0Ij48c3RvcCBzdG9wLWNvbG9yPSIjMDJCMkZDIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzIwQ0JCNiI+PC9zdG9wPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzEzRDM2MyI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0ibG9iZS1pY29ucy15dWFuYmFvLWZpbGwtMSIgeDE9IjkuMDk1IiB4Mj0iOS4wOTUiIHkxPSIwIiB5Mj0iMjMuNTM3Ij48c3RvcCBzdG9wLWNvbG9yPSIjQzNFQkVGIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDNGNEREIj48L3N0b3A+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJsb2JlLWljb25zLXl1YW5iYW8tZmlsbC0yIiB4MT0iNC4zMDgiIHgyPSI0LjMwOCIgeTE9IjQuNTkzIiB5Mj0iMjMuNTE2Ij48c3RvcCBzdG9wLWNvbG9yPSIjMTREMzY4Ij48L3N0b3A+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iIzI0Q0VBRCI+PC9zdG9wPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAzQjRGOCI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0ibG9iZS1pY29ucy15dWFuYmFvLWZpbGwtMyIgeDE9IjE1LjY4NSIgeDI9IjE1LjY4NSIgeTE9Ii4wMzkiIHkyPSIxNy4yNDkiPjxzdG9wIHN0b3AtY29sb3I9IiM2MUNGRkEiIHN0b3Atb3BhY2l0eT0iLjk5NiI+PC9zdG9wPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc5RTNDMCI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/ChatGLM-FFF?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjFlbSIgc3R5bGU9ImZsZXg6bm9uZTtsaW5lLWhlaWdodDoxIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPkNoYXRHTE08L3RpdGxlPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0ibG9iZS1pY29ucy1jaGF0Z2xtLWZpbGwiIHgxPSItMTguNzU2JSIgeDI9IjcwLjg5NCUiIHkxPSI0OS4zNzElIiB5Mj0iOTAuOTQ0JSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUwNEFGNCI+PC9zdG9wPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzM0ODVGRiI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxwYXRoIGQ9Ik05LjkxNyAyYzQuOTA2IDAgMTAuMTc4IDMuOTQ3IDguOTMgMTAuNTgtLjAxNC4wNy0uMDM3LjE0LS4wNTcuMjFsLS4wMDMtLjI3N2MtLjA4My0zLTEuNTM0LTguOTM0LTguODctOC45MzQtMy4zOTMgMC04LjEzNyAzLjA1NC03LjkzIDguMTU4LS4wNCA0Ljc3OCAzLjU1NSA4LjQgNy45NSA4LjMzMmwuMDczLS4wMDFjMS4yLS4wMzMgMi43NjMtLjQyOSAzLjEtMS42NTcuMDYzLS4wMzEuMjYuNTM0LjI2OC41OTguMDQ4LjI1Ni4xMTIuMzY5LjE5Mi4zNC45ODEtLjM0OCAyLjI4Ni0xLjIyMiAxLjk1Mi0yLjM4LS4xNzYtLjYxLTEuNzc1LS4xNDctMS45MjEtLjM0Ny40MTgtLjk3OSAyLjIzNC0uOTI2IDMuMTUzLS43MTYuNDQzLjEwMi42NTcuMzggMS4wMTIuNDQyLjI5LjA1Mi45ODEtLjIuOTYuMjQyLTEuNSAzLjA0Mi00Ljg5MyA1LjQxLTguODA4IDUuNDFDMy42NTQgMjIgMCAxNi41NzQgMCAxMS43MzcgMCA1Ljk0NyA0Ljk1OSAyIDkuOTE3IDJ6TTkuOSA1LjNjLjQ4NCAwIDEuMTI1LjIyNSAxLjM4LjU4NSAzLjY2OS4xNDUgNC4zMTMgMi42ODYgNC42OTQgNS40NDQuMjU1IDEuODM4LjMxNSAyLjMuMTgyIDEuMzg3bC4wODMuNTljLjA2OC40NDguNTU0LjczNy45ODIuNTE2LjE0NC0uMDc1LjI1NC0uMjMxLjMyOC0uNDdhLjIuMiAwIDAxLjI1OC0uMTNsLjYyNS4yMmEuMi4yIDAgMDEuMTI0LjIzOCAyLjE3MiAyLjE3MiAwIDAxLS41MS45MmMtLjg3OC45MTctMi43NTcuNjY0LTMuMDgtLjYyLS4xNC0uNTU0LS4wNTUtLjYyNi0uMzQ1LTEuMjQyLS4yOTItLjYyMS0xLjIzOC0uNzA5LTEuNjktLjI5NS0uMzQ1LjMxNS0uNDA3LjgwNS0uNDA2IDEuMjgyTDEyLjYgMTUuOWEuOS45IDAgMDEtLjkuOWgtMS40YS45LjkgMCAwMS0uOS0uOXYtLjY1YTEuMTUgMS4xNSAwIDEwLTIuMyAwdi42NWEuOS45IDAgMDEtLjkuOUg0LjhhLjkuOSAwIDAxLS45LS45bC4wMzUtMy4yMzljLjAxMi0xLjg4NC4zNTYtMy42NTggMi40Ny00LjEzNC4yLS4wNDUuMjUyLjEzLjI5LjM0Mi4wMjUuMTU0LjA0My4yNTIuMDUzLjI5NC43MDEgMy4wNTggMS43NSA0LjI5OSAzLjE0NCAzLjcyMmwuNjYtLjMzMS4yNTQtLjEzYy4xNTgtLjA4Mi4yNS0uMTMxLjI3Ni0uMTUuMDEyLS4wMS0uMTY1LS4yMDYtLjQwNy0uNDY0bC0xLjAxMi0xLjA2N2E4LjkyNSA4LjkyNSAwIDAxLS4xOTktLjIxNmMtLjA0Ny0uMDM0LS4xMTYuMDY4LS4yMDguMzA2LS4wNzQuMTU3LS4yNTEuMjUyLS4yNzIuMzI2LS4wMTMuMDU4LjEwOC4yOTguMzYyLjcyLjE2NC4yODguMjIuNTA4LS4zMS4zNDMtMS4wNC0uOC0xLjUxOC0yLjI3My0xLjY4NC0zLjcyNS0uMDA0LS4wMzUtLjE2Mi0xLjkxMy0uMTYyLTEuOTEzYTEuMiAxLjIgMCAwMTEuMTEzLTEuMjgxTDkuOSA1LjN6bTEyLjk5NCA4LjY4Yy4wMzcuNjk3LS40MDMuNzA0LTEuMjEzLjU5MWwtMS43ODMtLjI3NmMtLjI2NS0uMDUzLS4zODUtLjA5OS0uMzEzLS4xNDcuNDctLjMxNSAzLjI2OC0uOTMgMy4zMS0uMTY4em0tLjkxNS0uMDgzbC0uOTI2LjA0MmMtLjg1LjA3Ny0xLjQ1Mi4yNC4zMzguMzM2bC4xMDMuMDAzYy44MTUuMDEyIDEuMjY0LS4zNTkuNDg1LS4zODF6bTEuNjY3LTMuNjAxaC4wMWMuNzkuMzk4LjA2NyAxLjAzLS42NSAxLjM5My0uMTQuMDctLjQ5MS4xNzYtMS4wNTIuMzE1LS4yNDEuMDQtLjQ1Ny4wOTItLjMzMy4xNmwuMDEuMDA1YzEuOTUyLjk1OC0zLjEyMyAxLjUzNC0yLjQ5NSAxLjI4NWwuMzgtLjE0OGMuNjgtLjI2NiAxLjYxNC0uNjgyIDEuNjY2LTEuMzM3LjAzOC0uNDggMS4yNTMtLjQ0MiAxLjQ5My0uOTY4LjA0OC0uMTA2IDAtLjIzNi0uMTQ0LS4zODktLjA1LS4wNDctLjA5NC0uMDk0LS4xMDctLjE0OC0uMDczLS4zMDUuNy0uNDMxIDEuMjIyLS4xNjh6bS0yLjU2OC0uNDc0Yy0uMTM1IDEuMTk4LTIuNDc5IDQuMTkyLTEuOTQ5IDIuODYzbC4wMTctLjA0MmMuMjk4LS43MTcuMzc2LTIuMjIxIDEuMzM3LTMuMjIxLjI1LS4yNi42MzYuMDM1LjU5NS40em0tNy45NzYtLjI1M2MuMDItLjY5NCAxLjAwMi0uOTY4IDEuMzQ2LS4zNDcuMDEtMS4yNzQtMS45NDEtLjc2OC0xLjM0Ni4zNDd6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMtY2hhdGdsbS1maWxsKSIgZmlsbC1ydWxlPSJldmVub2RkIj48L3BhdGg+PC9zdmc+&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/TRAE-FFF?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjFlbSIgc3R5bGU9ImZsZXg6bm9uZTtsaW5lLWhlaWdodDoxIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPlRSQUU8L3RpdGxlPjxwYXRoIGQ9Ik0yMS41OTYgMkgyLjQwNEEuNDA0LjQwNCAwIDAwMiAyLjQwNHYxOS4xOTJjMCAuMjIzLjE4LjQwNC40MDQuNDA0aDE5LjE5MmMuMjIzIDAgLjQwNC0uMTguNDA0LS40MDRWMi40MDRBLjQwNC40MDQgMCAwMDIxLjU5NiAyeiIgZmlsbD0iI0ZGNEEzNiI+PC9wYXRoPjxwYXRoIGQ9Ik0xOC4zNjYgMTYuMTVIMTEuOXYyLjIxNGg2LjQ2NXYtMi4yMTV6IiBmaWxsPSIjZmZmIj48L3BhdGg+PC9zdmc+&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/LangChain-00AC47?style=flat-square&logo=langchain&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/Gradio-FFF?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjFlbSIgc3R5bGU9ImZsZXg6bm9uZTtsaW5lLWhlaWdodDoxIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIxZW0iIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPkdyYWRpbzwvdGl0bGU+PHBhdGggY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTEuMjM4IDcuNjAzYTEuNTMyIDEuNTMyIDAgMDExLjUyNCAwbDEwLjQ2OCA2YTEuNTMyIDEuNTMyIDAgMDEwIDIuNjZsLTEwLjQ2OCA2Yy0uNDcyLjI3LTEuMDUyLjI3LTEuNTI0IDBsLTEwLjQ2OC02YTEuNTMzIDEuNTMzIDAgMDEwLTIuNjZsMTAuNDY4LTZ6bS02LjYyNCA3LjMzTDEyIDE5LjE2Nmw3LjM4Ni00LjIzM0wxMiAxMC42OTlsLTcuMzg2IDQuMjM0eiIgZmlsbD0idXJsKCNsb2JlLWljb25zLWdyYWRpby1maWxsLTApIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD48cGF0aCBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS4yMzggMS43MzNhMS41MzMgMS41MzMgMCAwMTEuNTI0IDBsMTAuNDY4IDZhMS41MzIgMS41MzIgMCAwMTAgMi42NTlsLTEwLjQ2OCA2Yy0uNDcyLjI3LTEuMDUyLjI3LTEuNTI0IDBsLTEwLjQ2OC02YTEuNTMyIDEuNTMyIDAgMDEwLTIuNjU5bDEwLjQ2OC02em0tNi42MjQgNy4zM0wxMiAxMy4yOTZsNy4zODYtNC4yMzNMMTIgNC44MjkgNC42MTQgOS4wNjN6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMtZ3JhZGlvLWZpbGwtMSkiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjxwYXRoIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjc4NCAxMC4yNjVMMi4yOTEgMTYuMjM5Ljc3NCAxMy41NzVsMTAuNDk0LTUuOTc0IDEuNTE2IDIuNjY0eiIgZmlsbD0idXJsKCNsb2JlLWljb25zLWdyYWRpby1maWxsLTIpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjwvcGF0aD48ZGVmcz48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJsb2JlLWljb25zLWdyYWRpby1maWxsLTAiIHgxPSIuMTgyIiB4Mj0iMTkuMzc3IiB5MT0iMTQuOTA3IiB5Mj0iMTQuOTA3Ij48c3RvcCBzdG9wLWNvbG9yPSIjRjlEMTAwIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk3NzAwIj48L3N0b3A+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJsb2JlLWljb25zLWdyYWRpby1maWxsLTEiIHgxPSIyMy43NCIgeDI9IjQuNTE5IiB5MT0iOS4wMzciIHkyPSI5LjAzNyI+PHN0b3Agc3RvcC1jb2xvcj0iI0Y5RDEwMCI+PC9zdG9wPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y5NzcwMCI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0ibG9iZS1pY29ucy1ncmFkaW8tZmlsbC0yIiB4MT0iLjE4MiIgeDI9IjE5LjM1IiB5MT0iMTQuOTA3IiB5Mj0iMTQuNzkzIj48c3RvcCBzdG9wLWNvbG9yPSIjRjlEMTAwIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk3NzAwIj48L3N0b3A+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+&logoColor=white" />
+              <img
+                src="https://img.shields.io/badge/HuggingFace-FFD21E?style=flat-square&logo=huggingface&logoColor=white" />
+            </div>
           </el-col>
         </el-row>
+
+        <hr class="skills-divider" />
+
+        <h3>GitHub Activity</h3>
+        <div class="contribution-chart">
+          <img src="https://ghchart.rshah.org/1565C0/WhyLIM" />
+        </div>
       </div>
     </section>
 
     <!-- 经历部分 -->
     <section id="experience" class="section experience-section">
       <div class="inner-container">
-        <div class="experience-layout">
+        <el-row :gutter="20">
           <!-- 左侧标题 -->
-          <div class="experience-title-section">
+          <el-col :xs="24" :sm="10" :md="8">
             <h1 class="section-title">Experience</h1>
-          </div>
-
+          </el-col>
           <!-- 右侧时间轴 -->
-          <div class="experience-content-section">
+          <el-col :xs="24" :sm="14" :md="16" class="experience-col">
             <el-timeline>
               <el-timeline-item v-for="(exp, index) in experiences" :key="index" :timestamp="exp.period"
                 placement="top">
                 <el-card>
                   <template #header>
-                    <div class="experience-header">
+                    <div class="card-header">
                       <el-avatar :size="40" :src="exp.logo" />
-                      <div class="experience-title">
+                      <div class="header-info">
                         <h3>{{ exp.position }}</h3>
                         <p>{{ exp.institution }} · {{ exp.location }}</p>
                       </div>
                     </div>
                   </template>
-                  <div class="experience-content">
+                  <div class="card-content">
                     <p>{{ exp.description }}</p>
                   </div>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </div>
     </section>
 
     <!-- 论文部分 -->
     <section id="publications" class="section publications-section">
       <div class="inner-container">
-        <h1 class="section-title">Publications</h1>
         <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="8" v-for="(pub, index) in publications" :key="index">
-            <el-card class="publication-card">
-              <div class="publication-image">
-                <el-image :src="pub.image" fit="cover" @click="showPreview(pub.image)" />
-              </div>
-              <div class="publication-info">
-                <h3>{{ pub.title }}</h3>
-                <p class="authors">{{ pub.authors }}</p>
-                <p class="journal">{{ pub.journal }}, {{ pub.year }}</p>
-                <p class="description">{{ pub.description }}</p>
-                <div class="publication-links">
-                  <el-button v-for="(link, linkIndex) in pub.links" :key="linkIndex" size="small" type="primary" plain
-                    @click="window.open(link.url, '_blank')">
-                    {{ link.type }}
-                  </el-button>
+          <!-- 左侧标题 -->
+          <el-col :xs="24" :sm="10" :md="8">
+            <h1 class="section-title">Publications</h1>
+          </el-col>
+          <!-- 右侧论文容器 -->
+          <el-col :xs="24" :sm="14" :md="16">
+            <!-- 每个论文卡片单独一行 -->
+            <el-col :xs="24" :sm="24" :md="24" v-for="pub in paginatedPublications" :key="pub.id"
+              class="publication-col">
+              <el-card class="publication-card">
+                <template #header>
+                  <div class="card-header-publication">
+                    <div class="header-info-publication">
+                      <h3>{{ pub.title }}</h3>
+                      <div class="publication-image">
+                        <el-image :src="pub.image" fit="cover" @click="showPreview(pub.image)" />
+                      </div>
+                      <p>{{ pub.authors.join(', ') }}</p>
+                      <p class="journal">{{ pub.journal_full }} ({{ pub.journal_abbrev }}), {{ pub.year }}, Vol.{{
+                        pub.volume }}({{ pub.issue }}), p.{{ pub.pages }}</p>
+                    </div>
+                  </div>
+                </template>
+                <div class="card-content">
+                  <div>
+                    <el-text line-clamp="10" style="text-align: justify;">{{ pub.abstract }}</el-text>
+                  </div>
+                  <div class="card-keywords" v-if="pub.keywords && pub.keywords !== 'NA' && pub.keywords.length > 0">
+                    <el-tag v-for="(keyword, index) in pub.keywords" :key="index" size="small" type="info">
+                      {{ keyword }}
+                    </el-tag>
+                  </div>
+                  <div class="card-links">
+                    <el-button v-for="link in pub.links" :key="link.type" size="small" type="primary" plain
+                      @click="openLink(link.url)">
+                      {{ link.type }}
+                    </el-button>
+                  </div>
                 </div>
-              </div>
-            </el-card>
+              </el-card>
+            </el-col>
+            <!-- 分页 -->
+            <el-col :span="24">
+              <el-pagination background layout="prev, pager, next" :total="totalPublications" :page-size="3"
+                :current-page="currentPagePublications" @current-change="publicationPageChange" />
+            </el-col>
           </el-col>
         </el-row>
       </div>
@@ -308,23 +309,25 @@ const showPreview = (image) => {
     <section id="projects" class="section projects-section">
       <div class="inner-container">
         <h1 class="section-title">Projects</h1>
-        <el-row :gutter="20">
-          <el-col :xs="24" :sm="12" :md="8" v-for="(project, index) in projects" :key="index">
-            <el-card class="project-card">
-              <div class="project-image">
-                <el-image :src="project.image" fit="cover" @click="showPreview(project.image)" />
-              </div>
-              <div class="project-info">
-                <h3>{{ project.title }}</h3>
-                <p>{{ project.description }}</p>
-                <div class="project-links">
-                  <el-button v-for="(link, linkIndex) in project.links" :key="linkIndex" size="small" type="primary"
-                    plain @click="window.open(link.url, '_blank')">
-                    {{ link.type }}
-                  </el-button>
-                </div>
-              </div>
-            </el-card>
+        <div v-if="loading" class="loading-container">
+          <i class="fa fa-spinner fa-spin"></i> Loading projects...
+        </div>
+
+        <div v-if="error" class="error-message">
+          Failed to load projects: {{ error }}
+        </div>
+
+        <el-row :gutter="20" v-if="!loading && !error">
+          <el-col :xs="24" :sm="12" :md="8" v-for="(project, index) in paginatedProjects" :key="index"
+            class="project-col">
+            <GithubCard :author="project.owner.login" :project="project.name" :description="project.description"
+              :stars="project.stargazers_count" :forks="project.forks_count" :language="project.language"
+              :updated-at="project.updated_at" :size="index % 3 === 0 ? 'full' : 'mini'" />
+          </el-col>
+          <!-- 分页 -->
+          <el-col :span="24">
+            <el-pagination background layout="prev, pager, next" :total="projects.length" :page-size="6"
+              :current-page="currentPageProjects" @current-change="projectPageChange" />
           </el-col>
         </el-row>
       </div>
@@ -337,14 +340,16 @@ const showPreview = (image) => {
         <el-row :gutter="20">
           <el-col :xs="24" :sm="12" :md="8" v-for="(acc, index) in accomplishments" :key="index">
             <el-card class="accomplishment-card">
-              <div class="accomplishment-header">
-                <el-avatar :size="40" :src="acc.logo" />
-                <div class="accomplishment-title">
-                  <h3>{{ acc.title }}</h3>
-                  <p>{{ acc.institution }} · {{ acc.date }}</p>
+              <template #header>
+                <div class="card-header">
+                  <el-avatar :size="40" :src="acc.logo" />
+                  <div class="header-info">
+                    <h3>{{ acc.title }}</h3>
+                    <p>{{ acc.institution }} · {{ acc.date }}</p>
+                  </div>
                 </div>
-              </div>
-              <div class="accomplishment-content">
+              </template>
+              <div class="card-content">
                 <p>{{ acc.description }}</p>
                 <div class="certificate-image">
                   <el-image :src="acc.certificate" fit="cover" @click="showPreview(acc.certificate)" />
@@ -400,13 +405,6 @@ const showPreview = (image) => {
 </template>
 
 <style scoped>
-/* 通用样式 */
-/* .academic-cv {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-} */
-
 .inner-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -477,7 +475,7 @@ const showPreview = (image) => {
 
 .social-icons {
   display: flex;
-  gap: 15px;
+  gap: 5px;
 }
 
 .social-icons a {
@@ -500,7 +498,8 @@ h1 {
 }
 
 .bio-container p {
-  font-size: 21px;text-align: justify;
+  font-size: 21px;
+  text-align: justify;
 }
 
 .cv-buttons {
@@ -510,130 +509,116 @@ h1 {
 }
 
 /* 技能部分样式 */
-.skill-card {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  padding: 15px;
+.skill-col {
+  text-align: center;
 }
 
-.skill-icon {
-  margin-right: 15px;
+.skill-col img {
+  box-shadow: 2px 2px 2px #409eff;
+}
+
+.skills-section img {
+  margin: 5px;
+  transition: transform 0.3s ease;
+}
+
+.skills-section img:hover {
+  transform: translateY(-3px);
+}
+
+.skills-divider {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(21, 101, 192, 0.75), rgba(0, 0, 0, 0));
+  margin: 25px 0;
+}
+
+.skills-section h3 {
   color: #1565C0;
+  margin-top: 20px;
+  margin-bottom: 15px;
 }
 
-.skill-info h3 {
-  margin: 0 0 5px;
-  font-size: 18px;
-}
-
-.skill-info p {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-}
-
-/* 经历部分样式 */
-/* .experience-header {
-  display: flex;
-  align-items: center;
+.skills-section h4 {
+  color: #606266;
+  margin-top: 15px;
   margin-bottom: 10px;
 }
 
-.experience-title {
-  margin-left: 15px;
+.skills-section p {
+  font-size: 16px;
+  margin-bottom: 15px;
 }
 
-.experience-title h3 {
+.contribution-chart {
+  margin-top: 20px;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.contribution-chart img {
+  width: 85%;
+}
+
+/* 通用卡片样式 */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.header-info {
+  margin-left: 15px;
+  flex: 1;
+}
+
+.header-info h3 {
   margin: 0 0 5px;
   font-size: 18px;
 }
 
-.experience-title p {
+.header-info p {
   margin: 0;
   color: #909399;
   font-size: 14px;
-} */
+}
 
-/* 经历部分布局 */
-.experience-layout {
+.card-content {
+  padding: 10px 0;
+}
+
+.card-content p {
+  margin: 0 0 10px;
+  color: #606266;
+}
+
+.card-links {
+  margin-top: 15px;
   display: flex;
-  gap: 40px;
-  /* 左右两部分之间的间距 */
-}
-
-.experience-title-section {
-  flex: 0 0 400px; /* 固定左侧宽度 */
-  position: sticky;
-  top: 20px;       /* 滚动时保持固定位置 */
-  align-self: flex-start; /* 顶部对齐 */
-}
-
-.experience-content-section {
-  flex: 1;   /* 右侧占据剩余空间 */
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-  .experience-layout {
-    flex-direction: column;
-  }
-
-  .experience-title-section {
-    position: static;
-    margin-bottom: 20px;
-  }
-}
-
-/* 使头像和标题并排 */
-.experience-header {
-  display: flex;       /* 启用Flex布局 */
-  align-items: center; /* 垂直居中 */
-  gap: 15px;           /* 元素间距 */
-}
-
-.experience-title h3 {
-  margin: 0 0 5px 0; /* 调整标题间距 */
-}
-
-.experience-title p {
-  margin: 0; /* 移除段落默认间距 */
-  color: #909399;
-  font-size: 14px;
+  flex-wrap: wrap;
 }
 
 /* 论文部分样式 */
 .publication-card {
   margin-bottom: 20px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+}
+
+h3 {
+  font-size: 25px;
+  margin-bottom: 10px;
 }
 
 .publication-image {
   height: 150px;
   overflow: hidden;
   cursor: pointer;
+  margin-right: 15px;
 }
 
 .publication-image .el-image {
   width: 100%;
   height: 100%;
-}
-
-.publication-info {
-  padding: 15px;
-  flex: 1;
-}
-
-.publication-info h3 {
-  margin: 0 0 10px;
-  font-size: 18px;
-}
-
-.authors {
-  color: #606266;
-  margin: 5px 0;
 }
 
 .journal {
@@ -642,25 +627,22 @@ h1 {
   margin: 5px 0;
 }
 
-.publication-links {
-  margin-top: 15px;
+.card-keywords {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 5px;
 }
 
 /* 项目部分样式 */
 .project-card {
   margin-bottom: 20px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .project-image {
   height: 150px;
   overflow: hidden;
   cursor: pointer;
+  margin-right: 15px;
 }
 
 .project-image .el-image {
@@ -668,48 +650,10 @@ h1 {
   height: 100%;
 }
 
-.project-info {
-  padding: 15px;
-  flex: 1;
-}
-
-.project-info h3 {
-  margin: 0 0 10px;
-  font-size: 18px;
-}
-
-.project-links {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 /* 成就部分样式 */
 .accomplishment-card {
   margin-bottom: 20px;
   height: 100%;
-}
-
-.accomplishment-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.accomplishment-title {
-  margin-left: 15px;
-}
-
-.accomplishment-title h3 {
-  margin: 0 0 5px;
-  font-size: 18px;
-}
-
-.accomplishment-title p {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
 }
 
 .certificate-image {
@@ -755,8 +699,7 @@ h1 {
     flex-direction: column;
   }
 
-  .publication-links,
-  .project-links {
+  .card-links {
     justify-content: center;
   }
 }
