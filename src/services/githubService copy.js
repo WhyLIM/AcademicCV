@@ -18,8 +18,8 @@ const githubClient = axios.create({
 // 新增：从环境变量获取token
 const getGitHubToken = () => {
   // 优先级1：直接从import.meta.env读取（Vite）
-  if (import.meta.env.VITE_GITHUB_TOKEN) {
-    return import.meta.env.VITE_GITHUB_TOKEN;
+  if (import.meta.env.GITHUB_TOKEN_SECRET) {
+    return import.meta.env.GITHUB_TOKEN_SECRET;
   }
 
   // 优先级2：检查本地存储

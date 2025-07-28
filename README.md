@@ -1,17 +1,63 @@
-# AcademicCV
+# Academic CV
 
 ## 项目概述
 
-本项目是一个基于Vue 3、Element Plus和Font Awesome的学术简历网站，采用单页应用(SPA)设计，支持锚点平滑滚动和响应式布局，适配不同设备屏幕。网站使用简洁的蓝白灰配色方案，展示学术人员的个人信息、技能、经历、论文、项目、成就和联系方式。
+这是一个学术简历项目，使用 Vue 3 重写了 [starter-hugo-academic 项目](https://github.com/BellmanTimeHut/starter-hugo-academic)，并添加了一些自定义功能。
 
-## 技术栈**前端框架**: Vue 3.5.17
+## 主要功能
 
-- **UI组件库**: Element Plus 2.10.3
-- **图标库**: Font Awesome
-- **路由管理**: Vue Router 4.5.1
-- **状态管理**: Pinia 3.0.3
-- **构建工具**: Vite 7.0.0
-- **代码规范**: ESLint 9.29.0 + Prettier 3.5.3
+- 个人信息展示
+- 技能徽章展示
+- 教育和工作经历
+- 学术论文展示
+- GitHub 项目展示
+- 响应式设计，适配各种设备
+
+## 技术栈
+
+- **前端框架**: Vue 3
+- **UI 组件库**: Element Plus
+- **构建工具**: Vite
+- **路由管理**: Vue Router
+- **状态管理**: Pinia
+- **代码规范**: ESLint + Prettier
+
+## 项目结构
+
+```
+src/
+├── data/          # 各类数据文件
+│   ├── skills.js  # 技能数据
+│   ├── projects.js # 项目数据
+│   └── ...
+├── components/    # 可复用组件
+│   ├── GithubCard.vue # GitHub 项目卡片
+│   └── ...
+├── views/         # 页面视图
+│   └── HomeView.vue # 主页面
+└── services/      # 服务层
+    └── githubService.js # GitHub API 服务
+```
+
+## 开发指南
+
+1. 安装依赖
+
+```bash
+pnpm install
+```
+
+2. 启动开发服务器
+
+```bash
+pnpm dev
+```
+
+3. 构建生产版本
+
+```bash
+pnpm build
+```
 
 ## 开发进度
 
@@ -19,9 +65,9 @@
 
 1. **项目创建与依赖安装**
 
-   - 使用Vite创建Vue 3项目
-   - 安装Element Plus、Font Awesome等依赖
-   - 配置ESLint和Prettier
+   - 使用 Vite 创建 Vue 3 项目
+   - 安装 Element Plus、Font Awesome 等依赖
+   - 配置 ESLint 和 Prettier
 2. **基础结构设计**
 
    - 设计并实现顶部导航栏
@@ -38,7 +84,7 @@
 2. **技能模块**
 
    - 使用卡片组件展示各类技能
-   - 集成Font Awesome图标
+   - 集成 Font Awesome 图标
    - 按类别组织技能（操作系统、编程语言等）
 3. **经历模块**
 
@@ -49,7 +95,7 @@
 
    - 使用卡片组件展示学术论文
    - 包含标题、作者、期刊/会议、年份和摘要
-   - 添加论文链接（PDF、DOI、GitHub等）
+   - 添加论文链接（PDF、DOI、GitHub 等）
    - 实现论文相关图片预览功能
 5. **项目模块**
 
@@ -87,57 +133,11 @@
    - 响应式布局，适配桌面和移动设备
 2. **内容展示**
 
-   - 使用Element Plus组件（卡片、时间线、对话框等）
-   - 集成Font Awesome图标增强视觉效果
+   - 使用 Element Plus 组件（卡片、时间线、对话框等）
+   - 集成 Font Awesome 图标增强视觉效果
    - 图片预览功能
 3. **用户体验**
 
    - 平滑滚动到锚点位置
    - 简洁美观的蓝白灰配色方案
    - 统一的卡片样式和间距
-
-## 待实现功能
-
-1. **地图集成**
-
-   - 集成第三方地图API（如高德地图、百度地图）
-   - 显示办公地点位置
-2. **多语言支持**
-
-   - 添加中英文切换功能
-   - 本地化内容展示
-3. **主题切换**
-
-   - 实现浅色/深色主题切换
-   - 自定义主题色彩
-
-## 技术实现细节
-
-1. **Vue 3特性应用**
-
-   - 使用Composition API和 `<script setup>`语法
-   - 响应式系统（ref、reactive）管理状态
-2. **Element Plus组件应用**
-
-   - 使用Container布局组件（el-container、el-header、el-main、el-footer）
-   - 使用Menu组件实现导航菜单
-   - 使用Card、Timeline、Avatar等组件展示内容
-   - 使用Dialog组件实现图片预览
-3. **路由配置**
-
-   - 使用Vue Router的scrollBehavior实现平滑滚动
-   - 配置路由元信息（meta）设置页面标题
-4. **响应式设计**
-
-   - 使用Element Plus的栅格系统（el-row、el-col）
-   - 使用媒体查询适配不同屏幕尺寸
-   - 针对移动设备优化布局和交互
-5. **导航栏滚动效果**
-
-   - 使用Vue的生命周期钩子（onMounted、onBeforeUnmount）
-   - 监听滚动事件控制导航栏显示/隐藏
-   - 使用CSS transition实现平滑过渡效果
-
-## 总结
-
-本项目成功实现了一个功能完善、视觉美观的学术简历网站，采用现代前端技术栈，具有良好的用户体验和响应式设计。网站结构清晰，代码组织合理，便于维护和扩展。通过本项目，展示了Vue 3、Element Plus等技术在实际应用中的优势和实践方法。

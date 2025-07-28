@@ -35,8 +35,8 @@ setInterval(() => {
 // 安全获取环境变量
 const getGitHubToken = () => {
   // Vite环境
-  if (import.meta.env?.VITE_GITHUB_TOKEN) {
-    return import.meta.env.VITE_GITHUB_TOKEN;
+  if (import.meta.env?.GITHUB_TOKEN_SECRET) {
+    return import.meta.env.GITHUB_TOKEN_SECRET;
   }
 
   // 浏览器环境
