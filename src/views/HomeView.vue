@@ -1,15 +1,7 @@
-<!--
- * @Author: Mli-TB mli.bio@outlook.com
- * @Date: 2025-07-11 12:42:37
- * @LastEditors: Mli-TB mli.bio@outlook.com
- * @LastEditTime: 2025-07-27 16:36:19
- * @FilePath: \AcademicCV\src\views\HomeView.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import GithubCard from '@/components/GithubCard.vue'; // GitHub卡片组件
-import githubService from '@/services/githubService.js'; // GitHub服务
+import GithubCard from '@/components/GithubCard.vue'; // GitHub 卡片组件
+import githubService from '@/services/githubService.js'; // GitHub 服务
 
 // 导入所有数据
 import {
@@ -17,52 +9,56 @@ import {
   skills,
   experiences,
   publications,
+  projects,
   accomplishments,
   contactInfo
 } from '../data';
 
+// 技能徽章数据
 const generateBadgeUrl = (badge) => {
   const baseUrl = 'https://img.shields.io/badge/';
   const text = encodeURIComponent(badge.text);
   const color = (badge.color || 'default').replace(/^#/, ''); // 移除开头的井号
   const style = 'flat-square';
   const logoPart = `&logo=${badge.logo}`;
-
   return `${baseUrl}${text}-${color}?style=${style}${logoPart}&logoColor=white`;
 };
 
 const loading = ref(true);
 const error = ref(null);
-const projects = ref([]);
+const projectsInfo = ref([]);
 const currentPagePublications = ref(1)
 const currentPageProjects = ref(1)
-const pageSize = ref(3)
+const pageSizePublications = ref(3)
+const pageSizeProjects = ref(6)
 const totalPublications = ref(publications.length)
 
+// 论文分页
 const paginatedPublications = computed(() => {
-  const start = (currentPagePublications.value - 1) * pageSize.value
-  const end = start + pageSize.value
+  const start = (currentPagePublications.value - 1) * pageSizePublications.value
+  const end = start + pageSizePublications.value
   return publications.slice(start, end)
 })
 
 const publicationPageChange = (page) => {
   currentPagePublications.value = page
-  // 滚动到publications部分
+  // 滚动到 publications 部分
   const publicationsSection = document.getElementById('publications')
   if (publicationsSection) {
     publicationsSection.scrollIntoView({ behavior: 'smooth' })
   }
 }
 
+// 项目分页
 const paginatedProjects = computed(() => {
-  const start = (currentPageProjects.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return projects.value.slice(start, end)
+  const start = (currentPageProjects.value - 1) * pageSizeProjects.value
+  const end = start + pageSizeProjects.value
+  return projectsInfo.value.slice(start, end)
 })
 
 const projectPageChange = (page) => {
   currentPageProjects.value = page
-  // 滚动到projects部分
+  // 滚动到 projects 部分
   const publicationsSection = document.getElementById('projects')
   if (publicationsSection) {
     publicationsSection.scrollIntoView({ behavior: 'smooth' })
@@ -73,24 +69,11 @@ const openLink = (url) => {
   window.open(url, '_blank');
 };
 
-// 定义你想要显示的 GitHub 仓库列表
-const repoList = [
-  { owner: 'WhyLIM', repo: 'Drugbank_parse' },
-  { owner: 'WhyLIM', repo: 'TTD_parse' },
-  { owner: 'WhyLIM', repo: 'PersonalCV' },
-  { owner: 'WhyLIM', repo: 'DTII' },
-  { owner: 'WhyLIM', repo: 'ADDB' },
-  { owner: 'WhyLIM', repo: 'E-utilities_zh-CN' },
-  { owner: 'WhyLIM', repo: 'PhotoHub' },
-  { owner: 'WhyLIM', repo: 'Graduation' },
-  { owner: 'WhyLIM', repo: 'Notes-BioChem' },
-  { owner: 'WhyLIM', repo: 'Notes-GBiology' }
-];
-
 onMounted(async () => {
   try {
-    const results = await githubService.getMultipleReposInfo(repoList);
-    projects.value = results;
+    const results = await githubService.getMultipleReposInfo(projects);
+    console.log('API返回的数据结构:', results);
+    projectsInfo.value = results.successes;
   } catch (err) {
     error.value = err.message;
   } finally {
@@ -274,14 +257,15 @@ onMounted(async () => {
         <el-row :gutter="20" v-if="!loading && !error">
           <el-col :xs="24" :sm="12" :md="8" v-for="(project, index) in paginatedProjects" :key="index"
             class="project-col">
-            <GithubCard :author="project.owner.login" :project="project.name" :description="project.description"
-              :stars="project.stargazers_count" :forks="project.forks_count" :language="project.language"
-              :updated-at="project.updated_at" :size="index % 3 === 0 ? 'full' : 'mini'" />
+            <GithubCard :author="project.data.owner?.login || ''" :project="project.data.name"
+              :description="project.data.description" :stars="project.data.stargazers_count"
+              :forks="project.data.forks_count" :language="project.data.language"
+              :updatedAt="project.data.updated_at" />
           </el-col>
           <!-- 分页 -->
           <el-col :span="24">
-            <el-pagination background layout="prev, pager, next" :total="projects.length" :page-size="6"
-              :current-page="currentPageProjects" @current-change="projectPageChange" />
+            <el-pagination background layout="prev, pager, next" :total="projectsInfo.length" :page-size="6"
+              :current-page="currentPageProjects" @current-change="projectPageChange" class="project-pagination" />
           </el-col>
         </el-row>
       </div>
@@ -304,9 +288,9 @@ onMounted(async () => {
                 </div>
               </template>
               <div class="card-content">
-                <p>{{ acc.description }}</p>
+                <p v-html="acc.description"></p>
                 <div class="certificate-image">
-                  <el-image :src="acc.certificate" fit="cover" />
+                  <el-image :src="acc.certificate" fit="cover" loading="lazy" :preview-src-list="[acc.certificate]" />
                 </div>
               </div>
             </el-card>
@@ -320,6 +304,12 @@ onMounted(async () => {
       <div class="inner-container">
         <h1 class="section-title">Contact</h1>
         <el-row :gutter="20">
+          <el-col :xs="24" :sm="12">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3097.5302306118647!2d113.99016087106806!3d22.593872612113575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3403f2e532c68841%3A0xdbd44fb3e09227d2!2z5Lit5Zu956eR5a2m6Zmi5rex5Zyz5YWI6L-b5oqA5pyv56CU56m26Zmi!5e0!3m2!1szh-CN!2ssg!4v1753692890275!5m2!1szh-CN!2ssg"
+              width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </el-col>
           <el-col :xs="24" :sm="12">
             <el-card class="contact-card">
               <div class="contact-item">
@@ -335,17 +325,6 @@ onMounted(async () => {
                 <span>{{ contactInfo.email }}</span>
               </div>
             </el-card>
-          </el-col>
-          <el-col :xs="24" :sm="12">
-            <div class="map-container">
-              <!-- 这里可以集成地图组件，如高德地图、百度地图等 -->
-              <el-card>
-                <div
-                  style="height: 300px; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center;">
-                  <p>地图组件（需要集成第三方地图API）</p>
-                </div>
-              </el-card>
-            </div>
           </el-col>
         </el-row>
       </div>
@@ -515,6 +494,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 7px;
+  text-align: justify;
 }
 
 .header-info {
@@ -540,6 +520,7 @@ h1 {
 .card-content p {
   margin: 0 0 10px;
   color: #606266;
+  text-align: justify;
 }
 
 .card-links {
@@ -584,32 +565,19 @@ h3 {
 }
 
 /* 项目部分样式 */
-.project-card {
-  margin-bottom: 20px;
-  height: 100%;
-}
-
-.project-image {
-  height: 150px;
-  overflow: hidden;
-  cursor: pointer;
-  margin-right: 15px;
-}
-
-.project-image .el-image {
-  width: 100%;
-  height: 100%;
+.project-pagination {
+  justify-content: center;
 }
 
 /* 成就部分样式 */
 .accomplishment-card {
   margin-bottom: 20px;
-  height: 100%;
+  height: 97%;
 }
 
 .certificate-image {
   margin-top: 15px;
-  height: 150px;
+  height: 270px;
   overflow: hidden;
   cursor: pointer;
 }
@@ -628,7 +596,7 @@ h3 {
 .contact-item {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  padding: 5px;
 }
 
 .contact-item svg {

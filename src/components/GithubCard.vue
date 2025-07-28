@@ -1,33 +1,48 @@
 <template>
-  <div :class="['github-info-card', sizeClass, { 'shadow-sm': shadow }]">
+  <div :class="['github-info-card', { 'shadow-sm': shadow }]">
+    <!-- GitHub信息卡片头部 -->
     <div class="github-info-card-header">
+      <!-- GitHub链接 -->
       <a :href="repoUrl" target="_blank" rel="noopener noreferrer" title="Github">
-        <span><i class="fa fa-github"></i> GitHub</span>
+        <span><font-awesome-icon :icon="['fab', 'github']" /> GitHub</span>
       </a>
     </div>
+    <!-- GitHub信息卡片主体 -->
     <div class="github-info-card-body">
+      <!-- 项目名称 -->
       <div class="github-info-card-name-a">
         <a :href="repoUrl" target="_blank" rel="noopener noreferrer">
           <span class="github-info-card-name">{{ author }}/{{ project }}</span>
         </a>
       </div>
+      <!-- 项目描述 -->
       <div v-if="description || showPlaceholder" class="github-info-card-description">
-        {{ description || "Repo 描述将会显示在这里" }}
+        <el-text line-clamp="2" style="text-align: justify;">{{ description || "Repo 描述将会显示在这里" }}</el-text>
       </div>
-      <div v-if="language" class="github-info-card-language">
+      <!-- 项目语言 -->
+      <!-- <div v-if="language" class="github-info-card-language">
         <span class="language-dot" :style="{ backgroundColor: languageColor }"></span>
         {{ language }}
-      </div>
+      </div> -->
     </div>
+    <!-- GitHub信息卡片底部 -->
     <div class="github-info-card-bottom">
+      <!-- 星星数 -->
       <span class="github-info-card-meta github-info-card-meta-stars">
-        <i class="fa fa-star"></i>&nbsp;<span class="github-info-card-stars">{{ stars || 0 }}</span>
+        <font-awesome-icon :icon="['fas', 'star']" />&nbsp;<span class="github-info-card-stars">{{ stars || 0 }}</span>
       </span>
+      <!-- 分支数 -->
       <span class="github-info-card-meta github-info-card-meta-forks">
-        <i class="fa fa-code-fork"></i>&nbsp;<span class="github-info-card-forks">{{ forks || 0 }}</span>
+        <font-awesome-icon :icon="['fas', 'code-fork']" />&nbsp;<span class="github-info-card-forks">{{ forks || 0
+          }}</span>
       </span>
-      <span v-if="updatedAt" class="github-info-card-meta github-info-card-meta-updated">
-        <i class="fa fa-clock-o"></i>&nbsp;<span class="github-info-card-updated">{{ formatDate(updatedAt) }}</span>
+      <!-- 项目语言 -->
+      <span v-if="language" class="language-dot" :style="{ backgroundColor: languageColor }"></span>
+        {{ language }}
+      <!-- 更新时间 -->
+      <span v-if="updatedAt" class="github-info-card-meta-updated">
+        <font-awesome-icon :icon="['fas', 'clock']" />&nbsp;<span class="github-info-card-updated">{{
+          formatDate(updatedAt) }}</span>
       </span>
     </div>
   </div>
@@ -35,7 +50,9 @@
 
 <script setup>
 import { computed } from 'vue';
+import githubColors from 'github-colors';
 
+// 定义 props
 const props = defineProps({
   author: {
     type: String,
@@ -51,6 +68,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  language: {
+    type: String,
+    default: ''
+  },
   stars: {
     type: [Number, String],
     default: 0
@@ -59,10 +80,9 @@ const props = defineProps({
     type: [Number, String],
     default: 0
   },
-  size: {
+  updatedAt: {
     type: String,
-    default: 'full', // 'full' or 'mini'
-    validator: value => ['full', 'mini'].includes(value)
+    default: ''
   },
   shadow: {
     type: Boolean,
@@ -74,12 +94,12 @@ const props = defineProps({
   }
 });
 
-const sizeClass = computed(() =>
-  props.size === 'mini'
-    ? 'github-info-card-mini'
-    : 'github-info-card-full'
-);
+const languageColor = computed(() => {
+  const colorData = githubColors.get(props.language);
+  return colorData?.color || '#ccc'; // 默认灰色
+});
 
+// 计算repoUrl
 const repoUrl = computed(() =>
   `https://github.com/${props.author}/${props.project}`
 );
@@ -97,6 +117,7 @@ const formatDate = (dateString) => {
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   margin-bottom: 1.5em;
+  outline: auto;
 }
 
 .github-info-card-header {
@@ -117,6 +138,7 @@ const formatDate = (dateString) => {
 
 .github-info-card-body {
   padding: 12px;
+  min-height: 105px;
 }
 
 .github-info-card-name-a {
@@ -150,22 +172,7 @@ const formatDate = (dateString) => {
   margin-right: 3px;
 }
 
-/* Mini style */
-.github-info-card-mini {
-  max-width: 300px;
-}
 
-.github-info-card-mini .github-info-card-body {
-  padding: 8px 12px;
-}
-
-.github-info-card-mini .github-info-card-name {
-  font-size: 14px;
-}
-
-.github-info-card-mini .github-info-card-description {
-  display: none;
-}
 
 .github-info-card-language {
   margin-top: 8px;
