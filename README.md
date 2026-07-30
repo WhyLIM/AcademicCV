@@ -53,6 +53,8 @@ pnpm install
 pnpm dev
 ```
 
+将 `.env.example` 复制一份到 `.env`，并添加自己的 Github Token
+
 3. 构建生产版本
 
 ```bash
@@ -83,25 +85,21 @@ pnpm build
    - 添加简历下载按钮
 2. **技能模块**
 
-   - 使用卡片组件展示各类技能
-   - 集成 Font Awesome 图标
-   - 按类别组织技能（操作系统、编程语言等）
+   - 使用 Sheilds 徽章展示各类技能
+   - AI 图标从 [[LobeChat](https://lobehub.com/blog/knowledge-base)](https://lobehub.com/zh) 获得，并通过[网页工具](https://www.toolhelper.cn/Image/Base64?tab=image#)转为 Base64 编码进行引用
 3. **经历模块**
 
    - 使用时间线组件展示教育和工作经历
    - 包含职位、机构、时间段和地点信息
-   - 添加经历描述
 4. **论文模块**
 
    - 使用卡片组件展示学术论文
    - 包含标题、作者、期刊/会议、年份和摘要
-   - 添加论文链接（PDF、DOI、GitHub 等）
-   - 实现论文相关图片预览功能
+   - 添加论文链接（PubMed、PMC、DOI、Google Scholar）
 5. **项目模块**
 
-   - 使用卡片组件展示研究项目
-   - 包含项目标题、描述和相关链接
-   - 实现项目图片预览功能
+   - 使用卡片组件展示 Github 项目
+   - 包含项目标题、描述和主要语言等信息
 6. **成就模块**
 
    - 展示获奖情况和荣誉
@@ -109,8 +107,8 @@ pnpm build
    - 添加证书图片预览功能
 7. **联系方式模块**
 
+   - Google 地图集成（需要访问者有魔法）
    - 展示办公地点、办公时间和电子邮件
-   - 预留地图集成位置
 
 ### 第三阶段：优化与增强功能
 

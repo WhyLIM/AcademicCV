@@ -9,6 +9,29 @@ const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24小时缓存
 const MAX_CACHE_SIZE = 100; // 最大缓存数量
 const ERROR_CACHE_EXPIRY = 5 * 60 * 1000; // 错误缓存5分钟
 
+// 持久化缓存（localStorage，跨页面刷新保留）
+const STORAGE_KEY = 'github_repo_cache_v1';
+const PERSISTENT_TTL = 5 * 60 * 60 * 1000; // 5 小时（持久化默认 TTL）
+
+// 安全读取 localStorage（避免 SSR / 隐私模式抛错）
+function readStorage() {
+  if (typeof window === 'undefined') return {};
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch (_) {
+    return {};
+  }
+}
+
+function writeStorage(obj) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+  } catch (_) {
+    // 配额超出等异常忽略
+  }
+}
+
 // 创建带配置的axios实例
 const githubClient = axios.create({
   baseURL: GITHUB_API,
@@ -30,17 +53,36 @@ setInterval(() => {
       repoCache.delete(key);
     }
   }
+  // 同步清理持久化缓存中过期的项
+  const all = readStorage();
+  let dirty = false;
+  for (const [k, v] of Object.entries(all)) {
+    if (!v || now - v.timestamp > PERSISTENT_TTL) {
+      delete all[k];
+      dirty = true;
+    }
+  }
+  if (dirty) writeStorage(all);
 }, 60 * 60 * 1000); // 每小时清理一次
 
 // 安全获取环境变量
 const getGitHubToken = () => {
-  // Vite环境
-  if (import.meta.env?.GITHUB_TOKEN_SECRET) {
-    return import.meta.env.GITHUB_TOKEN_SECRET;
+  // 1) Vite 构建期环境变量（部署时注入）
+  if (import.meta.env?.VITE_GITHUB_TOKEN) {
+    return import.meta.env.VITE_GITHUB_TOKEN;
   }
 
-  // 浏览器环境
+  // 2) 浏览器环境：URL 参数 (?gh_token=xxx) 便于临时传 token
   if (typeof window !== 'undefined') {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get('gh_token');
+      if (fromQuery) {
+        sessionStorage.setItem('GITHUB_TOKEN', fromQuery);
+        return fromQuery;
+      }
+    } catch (_) { /* ignore */ }
+
     return localStorage?.getItem('GITHUB_TOKEN') ||
       sessionStorage?.getItem('GITHUB_TOKEN');
   }
@@ -90,6 +132,13 @@ async function processQueue() {
   } catch (error) {
     if (error.response?.status === 403) {
       REQUEST_INTERVAL = 5000; // 被限速时增加间隔
+      // 给错误附加可读提示（区分速率限制 vs 二级限制）
+      const remaining = error.response.headers?.['x-ratelimit-remaining'];
+      const reset = error.response.headers?.['x-ratelimit-reset'];
+      const isRateLimit = remaining === '0';
+      error.friendlyMessage = isRateLimit
+        ? `GitHub API 速率限制已达上限（匿名 60次/小时），将于 ${reset ? new Date(parseInt(reset) * 1000).toLocaleTimeString() : '稍后'} 重置。可通过 ?gh_token=xxx 或 localStorage 设置 GITHUB_TOKEN 提升到 5000次/小时。`
+        : `GitHub API 拒绝访问（403）。仓库可能为私有，或需要配置 GITHUB_TOKEN（通过 ?gh_token=xxx 或 localStorage）。`;
     }
     reject(error);
   } finally {
@@ -149,7 +198,7 @@ export default {
 
     const cacheKey = `${owner}/${repo}`;
 
-    // 检查缓存
+    // 1) 内存缓存
     if (repoCache.has(cacheKey)) {
       const cached = repoCache.get(cacheKey);
       if (Date.now() - cached.timestamp < cached.expiry) {
@@ -158,6 +207,23 @@ export default {
         }
         return cached.data;
       }
+    }
+
+    // 2) 持久化缓存（localStorage），避免刷新页面再次请求
+    const persist = readStorage();
+    if (persist[cacheKey]) {
+      const { data, timestamp, isError } = persist[cacheKey];
+      if (Date.now() - timestamp < PERSISTENT_TTL) {
+        // 命中后回填内存缓存
+        addToCache(cacheKey, data, !!isError);
+        if (isError) {
+          throw data;
+        }
+        return data;
+      }
+      // 过期则清理
+      delete persist[cacheKey];
+      writeStorage(persist);
     }
 
     return new Promise((resolve, reject) => {
@@ -169,11 +235,16 @@ export default {
         },
         resolve: (response) => {
           addToCache(cacheKey, response);
+          // 写入持久化缓存
+          const all = readStorage();
+          all[cacheKey] = { data: response, timestamp: Date.now(), isError: false };
+          writeStorage(all);
           resolve(response);
         },
         reject: (error) => {
           if (!axios.isCancel(error)) {
             addToCache(cacheKey, error, true);
+            // 错误也缓存（短 TTL），但避免污染持久化层
           }
           reject(error);
         }
@@ -199,7 +270,7 @@ export default {
     for (const [index, { owner, repo }] of repos.entries()) {
       try {
         const repoInfo = await this.getRepoInfo(owner, repo);
-        results.push(repoInfo);
+        results.push({ owner, repo, data: repoInfo.data });
 
         // 最后一个请求不需要等待
         if (index < repos.length - 1) {
@@ -207,13 +278,17 @@ export default {
         }
       } catch (error) {
         console.error(`获取 ${owner}/${repo} 信息失败:`, error);
-        errors.push(error);
-        results.push(null);
+        if (error.friendlyMessage) {
+          console.warn('[GitHub Service]', error.friendlyMessage);
+        }
+        errors.push({ owner, repo, error });
+        results.push({ owner, repo, data: null, failed: true });
       }
     }
 
     return {
-      successes: results.filter(repo => repo !== null),
+      successes: results.filter(r => r && !r.failed),
+      failures: results.filter(r => r && r.failed),
       errors
     };
   },
@@ -241,9 +316,34 @@ export default {
   },
 
   /**
-   * 清空缓存
+   * 清空缓存（仅内存）
    */
   clearCache() {
     repoCache.clear();
+  },
+
+  /**
+   * 清空持久化缓存（localStorage）
+   */
+  clearPersistentCache() {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (_) { /* ignore */ }
+  },
+
+  /**
+   * 获取持久化缓存状态（调试用）
+   */
+  getPersistentCacheInfo() {
+    const all = readStorage();
+    const now = Date.now();
+    const entries = Object.entries(all).map(([k, v]) => ({
+      key: k,
+      ageMs: now - v.timestamp,
+      expired: now - v.timestamp > PERSISTENT_TTL,
+      isError: !!v.isError
+    }));
+    return { count: entries.length, entries };
   }
 };

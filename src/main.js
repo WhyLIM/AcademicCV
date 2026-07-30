@@ -19,18 +19,15 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* 导入品牌图标 */
-import { faGithub, faResearchgate } from '@fortawesome/free-brands-svg-icons'
+import { faGithub, faResearchgate, faGoogleScholar } from '@fortawesome/free-brands-svg-icons'
 
 /* 导入常规图标 */
-import { faEnvelope, faFileArrowDown, faMapMarkerAlt, faClock, faDatabase, faStar, faCodeFork } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faFileArrowDown, faMapMarkerAlt, faClock, faStar, faCodeFork } from '@fortawesome/free-solid-svg-icons'
 
-/* 导入技能相关图标 */
-import { faGoogleScholar, faWindows, faLinux, faApple, faPython, faRProject, faHtml5, faCss3Alt, faJs, faVuejs } from '@fortawesome/free-brands-svg-icons'
-
-/* 添加图标到库中 */
+/* 注册到图标库 */
 library.add(
-  faGithub, faResearchgate, faEnvelope, faFileArrowDown, faMapMarkerAlt, faClock, faDatabase, faStar, faCodeFork,  
-  faGoogleScholar, faWindows, faLinux, faApple, faPython, faRProject, faHtml5, faCss3Alt, faJs, faVuejs
+  faGithub, faResearchgate, faGoogleScholar,
+  faEnvelope, faFileArrowDown, faMapMarkerAlt, faClock, faStar, faCodeFork
 )
 
 import App from './App.vue'

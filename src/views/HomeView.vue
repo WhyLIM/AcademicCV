@@ -27,6 +27,36 @@ const generateBadgeUrl = (badge) => {
 const loading = ref(true);
 const error = ref(null);
 const projectsInfo = ref([]);
+const projectNotice = ref('');
+
+// 从持久化缓存预填充，避免首屏出现 loading 闪烁
+const STORAGE_KEY = 'github_repo_cache_v1';
+const PERSISTENT_TTL = 5 * 60 * 60 * 1000; // 与 service 中保持一致
+function loadFromCache() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const all = JSON.parse(raw);
+    const now = Date.now();
+    return projects.map(p => {
+      const k = `${p.owner}/${p.repo}`;
+      const v = all[k];
+      if (v && now - v.timestamp < PERSISTENT_TTL && !v.isError) {
+        return { owner: p.owner, repo: p.repo, data: v.data.data, failed: false };
+      }
+      return null;
+    }).filter(Boolean);
+  } catch (_) {
+    return [];
+  }
+}
+const cachedInit = loadFromCache();
+if (cachedInit.length > 0) {
+  projectsInfo.value = cachedInit;
+  loading.value = false; // 已有缓存则不显示 loading
+}
+
 const currentPagePublications = ref(1)
 const currentPageProjects = ref(1)
 const pageSizePublications = ref(3)
@@ -73,7 +103,16 @@ onMounted(async () => {
   try {
     const results = await githubService.getMultipleReposInfo(projects);
     console.log('API返回的数据结构:', results);
-    projectsInfo.value = results.successes;
+    // 合并：API 成功的覆盖缓存项，失败的保留
+    const merged = projects.map(p => {
+      const hit = results.successes.find(s => s.owner === p.owner && s.repo === p.repo);
+      return hit || { owner: p.owner, repo: p.repo, data: null, failed: true };
+    });
+    projectsInfo.value = merged;
+    if (results.failures?.length) {
+      const firstErr = results.failures[0].error;
+      projectNotice.value = firstErr?.friendlyMessage || `部分项目（${results.failures.length}）加载失败`;
+    }
   } catch (err) {
     error.value = err.message;
   } finally {
@@ -254,13 +293,16 @@ onMounted(async () => {
           Failed to load projects: {{ error }}
         </div>
 
+        <el-alert v-if="projectNotice" :title="projectNotice" type="warning" show-icon :closable="false"
+          style="margin-bottom: 16px;" />
+
         <el-row :gutter="20" v-if="!loading && !error">
           <el-col :xs="24" :sm="12" :md="8" v-for="(project, index) in paginatedProjects" :key="index"
             class="project-col">
-            <GithubCard :author="project.data.owner?.login || ''" :project="project.data.name"
-              :description="project.data.description" :stars="project.data.stargazers_count"
-              :forks="project.data.forks_count" :language="project.data.language"
-              :updatedAt="project.data.updated_at" />
+            <GithubCard :author="project.owner || ''" :project="project.repo"
+              :description="project.data?.description || (project.failed ? '暂无法加载（可能受 GitHub API 速率限制）' : '')"
+              :stars="project.data?.stargazers_count || 0" :forks="project.data?.forks_count || 0"
+              :language="project.data?.language || ''" :updatedAt="project.data?.updated_at || ''" />
           </el-col>
           <!-- 分页 -->
           <el-col :span="24">

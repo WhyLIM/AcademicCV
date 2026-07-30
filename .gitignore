@@ -32,3 +32,9 @@ coverage
 .env
 publication.ipynb
 pubmedData.js
+
+# 备份文件
+*copy.*
+*.bak
+*.orig
+*.tmp
