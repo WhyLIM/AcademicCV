@@ -347,10 +347,8 @@ onMounted(async () => {
         <h1 class="section-title">Contact</h1>
         <el-row :gutter="20">
           <el-col :xs="24" :sm="12">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3097.5302306118647!2d113.99016087106806!3d22.593872612113575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3403f2e532c68841%3A0xdbd44fb3e09227d2!2z5Lit5Zu956eR5a2m6Zmi5rex5Zyz5YWI6L-b5oqA5pyv56CU56m26Zmi!5e0!3m2!1szh-CN!2ssg!4v1753692890275!5m2!1szh-CN!2ssg"
-              width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe :src="contactInfo.map.embedUrl" :title="contactInfo.map.placeName" width="600" height="450"
+              style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </el-col>
           <el-col :xs="24" :sm="12">
             <el-card class="contact-card">

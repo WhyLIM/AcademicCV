@@ -9,10 +9,18 @@
 // 经历数据
 export const experiences = [
   {
+    position: 'Postgraduate in MMedSc',
+    institution: 'The University of Hong Kong',
+    logo: 'https://img.limina.top/cv/icons/org-hku.svg',
+    period: 'Sep 2026 – Present',
+    location: 'Hong Kong',
+    description: 'Major in Genomics and Bioinformatics.'
+  },
+  {
     position: 'Assistant Engineer',
-    institution: 'Shenzhen Institutes of Advanced Technology (SIAT), Chinese Academy of Sciences',
+    institution: 'Shenzhen Institute of Advanced Technology (SIAT), Chinese Academy of Sciences',
     logo: 'https://img.limina.top/cv/icons/org-siat.svg',
-    period: 'July 2025 – Present',
+    period: 'July 2025 – Aug 2026',
     location: 'Shenzhen',
     description: 'Biomedical big data analysis and programming.'
   },
